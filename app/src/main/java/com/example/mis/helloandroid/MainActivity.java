@@ -12,6 +12,7 @@ import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     ImageView imageView;
     EditText editText;
+    // for all webview code: https://developer.chrome.com/multidevice/webview/gettingstarted
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         imageView = findViewById(R.id.imageView);
         editText = findViewById(R.id.editText);
+        webView = findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
     }
 
     // https://stackoverflow.com/questions/5474089/how-to-check-currently-internet-connection-is-available-or-not-in-android
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             // To make sure the URL is working
             if (!message.startsWith("http"))
                 message = "http://" + message;
-            new GetPageTask(imageView, textView).execute(message);
+            new GetPageTask(imageView, textView, webView).execute(message);
 
         }
     }
@@ -69,10 +74,12 @@ public class MainActivity extends AppCompatActivity {
         Exception exception;
         private TextView textview;
         private ImageView imageView;
+        private WebView webview;
 
-        public GetPageTask (ImageView iv, TextView tv){
+        public GetPageTask (ImageView iv, TextView tv, WebView wv){
             this.imageView = iv;
             this.textview = tv;
+            this.webview = wv;
         }
 
         @Override
@@ -134,18 +141,24 @@ public class MainActivity extends AppCompatActivity {
                     // clear imageview https://stackoverflow.com/questions/2859212/how-to-clear-an-imageview-in-android
                     imageView.setImageResource(android.R.color.transparent);
                     textview.setText("");
+                    webView.loadUrl("about:blank");
                     //makes text scrollable
                     textview.setMovementMethod( new ScrollingMovementMethod());
-                    textview.setText(Html.fromHtml(text));
+                    webView.setHorizontalScrollBarEnabled(true);
+                    webView.setVerticalScrollBarEnabled(true);
+                    // https://stackoverflow.com/questions/8987509/how-to-pass-html-string-to-webview-on-android
+                    webView.loadDataWithBaseURL("", text, "text/html", "UTF-8", "");
                     break;
                 case "image":
                     imageView.setImageResource(android.R.color.transparent);
                     textview.setText("");
+                    webView.loadUrl("about:blank");
                     imageView.setImageBitmap(bm);
                     break;
                 default:
                     imageView.setImageResource(android.R.color.transparent);
                     textview.setText("");
+                    webView.loadUrl("about:blank");
                     textview.setText(text);
                     break;
             }

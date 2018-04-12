@@ -22,6 +22,11 @@
         android:onClick="sendMessage"
         android:text="@string/button_text" />
 
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/editText" />
     <TextView
         android:id="@+id/textView"
         android:layout_width="fill_parent"
@@ -35,5 +40,7 @@
         android:layout_height="fill_parent"
         android:layout_below="@+id/editText"
         android:contentDescription="@string/imageViewDescr" />
+
+
 
 </RelativeLayout>
